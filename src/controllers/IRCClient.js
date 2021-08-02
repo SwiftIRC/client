@@ -12,7 +12,9 @@ const shared = ref({
     isSidebarOpen: false,
     bot: new IRC.Client(),
     buffers: [],
-    messages: {}
+    messages: {},
+    nick: '',
+    nicks: {}
 })
 
 export default function IRCClient() {
@@ -31,8 +33,10 @@ export default function IRCClient() {
             autoReconnect: true
         })
 
-        shared.value.bot.on('registered', () => {
-            shared.value.buffers.push({ name: "Status" })
+        shared.value.bot.on('registered', (event) => {
+            shared.value.buffers.push({ name: "Status", nicks: {} })
+
+            shared.value.nick = event.nick
 
             shared.value.config.channels.split(',').forEach(channel => {
                 const chan = shared.value.bot.channel(channel)
@@ -113,6 +117,34 @@ export default function IRCClient() {
 
         shared.value.bot.on('raw', (event) => {
             console.log(event)
+        })
+
+        shared.value.bot.on('wholist', (event) => {
+            shared.value.buffers.forEach(buffer => {
+                if (buffer.name === event.channel) {
+                    buffer.users = {}
+                    event.users.forEach(user => {
+                        buffer.users[user.nick] = user
+                    })
+                    // buffer.users = event.users.value
+                    console.log(buffer.users)
+                }
+            })
+        })
+        shared.value.bot.on('userlist', (event) => {
+            shared.value.buffers.forEach(buffer => {
+                if (buffer.name === event.channel) {
+                    buffer.users = {}
+                    event.users.forEach(user => {
+                        buffer.users[user.nick] = user
+                    })
+                    // buffer.users = event.users.value
+                    console.log(buffer.users)
+                }
+            })
+        })
+        shared.value.bot.on('channel list', (event) => {
+            console.log('channel list', event)
         })
     }
 

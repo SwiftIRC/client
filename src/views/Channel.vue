@@ -24,7 +24,9 @@
       <div id="text" :class="{ hidden: !shared.isActive }" v-for="message in shared.messages[shared.active]" :key="message.tags.msgid">
         <!-- { "account": false, "nick": "SwiftGuest2017", "ident": "~swift", "hostname": "Swift-4D1062C2.hsd1.co.comcast.net", "gecos": "SwiftIRC Guest: SwiftGuest2017", "channel": "#asdfghj", "time": 1627742064758, "tags": { "msgid": "y1AMGdqWily6kzxPRi6Sos-m+qXgaWjo55zRduWkwmRRA", "time": "2021-07-31T14:34:24.758Z" }, "event": "join" } -->
         {{ message.event == "join" ? message.nick + " has joined " + message.channel : "" }}
-        {{ message.event == "part" ? message.nick + " has left " + message.channel : "" }}
+        {{ message.event == "part" ? message.nick + " has left " + message.channel + (message.message !== undefined ? ": " + message.message : "") : "" }}
+        {{ message.event == "quit" ? message.nick + " has disconnected" + (message.message !== undefined ? ": " + message.message : "") : "" }}
+        {{ message.event == "kick" ? message.kicked + " has kicked from " + message.channel + " by " + message.nick + (message.message !== undefined ? ": " + message.message : "") : "" }}
         {{ message.event == "nick" ? message.nick + " is now known as " + message.new_nick : "" }}
 
         {{ message.message !== undefined ? message.nick !== "" ? "&lt;" + message.nick + "&gt; " + message.message : message.message : ""  }}
@@ -101,5 +103,9 @@ export default {
 
 #container a {
   text-decoration: none;
+}
+
+input {
+  color: black;
 }
 </style>
